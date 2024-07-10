@@ -1,8 +1,15 @@
-import {configureStore} from "@reduxjs/toolkit";
+import { configureStore } from "@reduxjs/toolkit";
+import DataSlice from "./DataSlice";
+
+
+const localMiddleware = (state:any) => {
+    console.log(state);
+}
 
 
 const Store = configureStore({
-    reducer:{},
+    reducer: { DataSlice },
+    
 });
 
 export default Store;
