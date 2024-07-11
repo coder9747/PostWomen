@@ -6,7 +6,8 @@ export default {
       colors: {
         secondary: "#f2f2f2",
         button:'#17bd9c',
-        primary:'#2f0951',
+        primary:'#fb2735',
+        myred:'#fb2735'
       },
     },
   },

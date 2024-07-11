@@ -2,6 +2,9 @@ import React, { useCallback, useState } from 'react'
 import { useDispatch, useSelector } from 'react-redux';
 import { addCollection, addRequest, addSubCollection, ApiRequest, changeActiveCollection, changeActiveRequestIndex, changeActiveSubCollection, Collections, getState, initialState, SubCollections, updateAllActiveIndex } from './Redux-Store/DataSlice';
 import Main from './Components/Main';
+import Response from './Components/Response';
+import Split from 'react-split'
+
 
 const App = () => {
 
@@ -73,7 +76,7 @@ const App = () => {
     dispatch(updateAllActiveIndex(array));
   };
   return (
-    <div className='h-screen flex flex-col'>
+    <div className='h-screen flex flex-col bg-black'>
       <div className='text-center bg-secondary py-2 text-sm'>My WorkSpace </div>
       <div className='bg-gray-200 h-[1px]'></div>
       <ul className='flex  gap-2  px-1 bg-secondary'>
@@ -165,7 +168,7 @@ const App = () => {
             }
           </div>
         </div>
-        <div className='col-span-10 bg-white'>
+        <div className='col-span-10  to-black'>
           <div className='flex  h-10 border items-center justify-start'>
             {
               getActiveStates(state).map((data: [ApiRequest, [number, number, number]]) => {
@@ -181,7 +184,16 @@ const App = () => {
               })
             }
           </div>
-          <Main />
+          <Split
+            sizes={[40, 60]}
+            direction='vertical'
+            style={{ height: "800px" }}
+            cursor='row-resize'
+            >
+            <Main />
+            <Response />
+          </Split>
+
         </div>
 
       </div>

@@ -2,6 +2,9 @@ import React, { useState } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
 import { ApiRequest, getState, initialState, updateCurrentRequestSettingIndex, updateRequestDataUrl, updateRequestMethodChange, updateRequestProtocol } from '../Redux-Store/DataSlice';
 import Params from './Settings/Params';
+import Body from './Settings/Body';
+import Authorization from './Settings/Authorization';
+import Headers from './Settings/Headers';
 
 interface Change {
     method: boolean,
@@ -55,7 +58,7 @@ const Main = () => {
 
     return (
         reqItem &&
-        <div className='relative'>
+        <div className='relative border  border-b-2 border-b-orange-600 '>
             <div className='flex h-10 border items-center px-5'>
                 <img className='h-5' alt='http img' src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcT17aug6sTeQ2UAUSnqpeCBtnp59qHC4hWE_w&s" />
                 {state.activeCollection != null && state.activeSubcollection != null && state.activeRequestIndex != null && <div className='flex w-48 justify-around text-sm  text-gray-500'>
@@ -100,9 +103,11 @@ const Main = () => {
                     return <p onClick={() => dispatch(updateCurrentRequestSettingIndex(idx))} className={` border-b p-1 text-sm  ${reqItem.activeRequestSettingsIndex == idx ? 'border-b-orange-500' : null}`}>{item.name}</p>
                 })}
             </ul>
-            {
-                getActiveSettingComponent(reqItem)
-            }
+
+            <div className=' overflow-y-scroll'>
+                {getActiveSettingComponent(reqItem)}
+            </div>
+
         </div>
     )
 }
@@ -119,8 +124,17 @@ function getColors(method: string | undefined) {
     return methods.find((item) => item.name == method)?.color
 }
 
-function getActiveSettingComponent(requestItem: ApiRequest): JSX.Element {
+function getActiveSettingComponent(requestItem: ApiRequest) {
     if (requestItem.activeRequestSettingsIndex == 0) {
         return <Params />
+    }
+    else if (requestItem.activeRequestSettingsIndex == 1) {
+        return <Body />
+    }
+    else if (requestItem.activeRequestSettingsIndex == 2) {
+        return <Authorization />
+    }
+    else if (requestItem.activeRequestSettingsIndex == 3) {
+        return <Headers />
     }
 }

@@ -1,5 +1,5 @@
-import { createSlice } from "@reduxjs/toolkit";
-
+import { createSlice, findNonSerializableValue } from "@reduxjs/toolkit";
+import queryString from 'query-string';
 export type Params = {
     name: string,
     values?: Array<[string, string]>
@@ -89,7 +89,7 @@ const DataSlice = createSlice({
                         url: '',
                         protocol: "http",
                         activeRequestSettingsIndex: 0,
-                        requestSettings: [{ name: "Params", values: [['', '']] }, { name: "Body" }, { name: "Authorization" }, { name: "Headers" }]
+                        requestSettings: [{ name: "Params", values: [['', '']] }, { name: "Body" }, { name: "Authorization" }, { name: "Headers", values: [['', '']] }]
                     });
             }
         },
@@ -105,10 +105,23 @@ const DataSlice = createSlice({
             state.activeSubcollection = Sindex;
             state.activeRequestIndex = reqIndex;
         },
-        updateRequestDataUrl(state, action) {
+        updateRequestDataUrl(state, action) {   
             const value = action.payload as string;
             if (state.activeCollection != null && state.activeRequestIndex != null && state.activeSubcollection != null) {
-                state.folders[state.activeCollection].collections[state.activeSubcollection].requests[state.activeRequestIndex].url = value;
+                const url = state.folders[state.activeCollection].collections[state.activeSubcollection].requests[state.activeRequestIndex];
+                if (url) {
+                    url.url = value;
+                    const isQuery = url.url.split("?");
+                    if (isQuery.length > 1) {
+                        const query = queryString.parse(isQuery[1]);
+                        const newValues = Object.entries(query).reduce((pre, acc) => {
+                            //@ts-ignore
+                            pre.push(acc);
+                            return pre;
+                        }, []);
+                        url.requestSettings[0].values = newValues;
+                    }
+                }
             }
         },
         updateRequestProtocol(state, action) {
@@ -143,10 +156,46 @@ const DataSlice = createSlice({
                 if (values) {
                     values[idx][key] = value;
                 }
-                values?.forEach
-                //now update query url base on query string
+                const queryParams = values?.reduce((acc,pre)=>{
+                    //@ts-ignore
+                    acc[pre[0]] = pre[1];
+                    return acc;
+                },{});
+                //@ts-ignore
+                const queryStringFields = queryString.stringify(queryParams);
+                const fullUrl = state.folders[state.activeCollection].collections[state.activeSubcollection].requests[state.activeRequestIndex].url?.split("?")[0];
+                state.folders[state.activeCollection].collections[state.activeSubcollection].requests[state.activeRequestIndex].url = `${fullUrl}?${queryStringFields}`;
+                
+                
+
+
             }
 
+        },
+        updateRequestBody(state, action) {
+            if (state.activeCollection != null && state.activeSubcollection != null && state.activeRequestIndex != null) {
+                const val = state.folders[state.activeCollection].collections[state.activeSubcollection].requests[state.activeRequestIndex].requestSettings;
+                if (val) {
+                    val[1].values = action.payload;
+                };
+            }
+        },
+        updateRequestHeaderInput(state, action) {
+            const { idx, value, key }: { idx: number, value: string, key: number } = action.payload;
+            if (state.activeCollection != null && state.activeSubcollection != null && state.activeRequestIndex != null) {
+                const val = state.folders[state.activeCollection].collections[state.activeSubcollection].requests[state.activeRequestIndex].requestSettings[3].values;
+                if (val) {
+                    val[idx][key] = value;
+                }
+            }
+
+        },
+        addMoreRequestHeadersInput(state) {
+            if (state.activeCollection != null && state.activeSubcollection != null && state.activeRequestIndex != null) {
+                const val = state.folders[state.activeSubcollection].collections[state.activeSubcollection]
+                    .requests[state.activeRequestIndex].requestSettings[3].values;
+                val?.push(['', '']);
+            }
         }
     }
 });
@@ -165,7 +214,10 @@ export const {
     updateRequestMethodChange,
     updateCurrentRequestSettingIndex,
     addNewQueryParams,
-    updateQueryParameterInRequest
+    updateQueryParameterInRequest,
+    updateRequestBody,
+    updateRequestHeaderInput,
+    addMoreRequestHeadersInput
 
 } = DataSlice.actions;
 
