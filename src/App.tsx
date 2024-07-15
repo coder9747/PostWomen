@@ -1,6 +1,6 @@
 import React, { useCallback, useState } from 'react'
 import { useDispatch, useSelector } from 'react-redux';
-import { addCollection, addRequest, addSubCollection, ApiRequest, changeActiveCollection, changeActiveRequestIndex, changeActiveSubCollection, Collections, getState, initialState, SubCollections, updateAllActiveIndex } from './Redux-Store/DataSlice';
+import { addCollection, addRequest, addSubCollection, ApiRequest, changeActiveCollection, changeActiveRequestIndex, changeActiveSubCollection, Collections, getState, initialState, requestNameChange, SubCollections, updateAllActiveIndex } from './Redux-Store/DataSlice';
 import Main from './Components/Main';
 import Response from './Components/Response';
 import Split from 'react-split'
@@ -75,8 +75,13 @@ const App = () => {
   const handleChangePresentActiveWindow = (array: [number, number, number]) => {
     dispatch(updateAllActiveIndex(array));
   };
+  const  handleRequestNameChange = (value:string) => {
+     dispatch(requestNameChange(value))
+
+  };
+
   return (
-    <div className='h-screen flex flex-col bg-black'>
+    <div className='h-screen flex flex-col '>
       <div className='text-center bg-secondary py-2 text-sm'>My WorkSpace </div>
       <div className='bg-gray-200 h-[1px]'></div>
       <ul className='flex  gap-2  px-1 bg-secondary'>
@@ -176,23 +181,18 @@ const App = () => {
                 const isActiveBorder = checkActiveBorder([[folderIndex, subFolderIndex, requestIndex], [state.activeCollection, state.activeSubcollection, state.activeRequestIndex]]);
                 return (<div onClick={() => handleChangePresentActiveWindow([folderIndex, subFolderIndex, requestIndex])} className={`flex
                   ${isActiveBorder ? "border-b-orange-500" : null}
-                w-36 justify-center h-full gap-2 py-2 border text-[12px] border-b-2`}>
+                w-36 justify-around h-full gap-2 py-2 border text-[12px] border-b-2`}>
                   <p className=''>{item.method}</p>
-                  <p>{item.name}</p>
+                  <input onChange={(e)=>handleRequestNameChange(e.target.value)} className='w-16 outline-none ' value={item.name?.length<20?item.name:item.name.slice(20)+'...'} type="text" />
                   <p><i className="fa-solid fa-xmark"></i></p>
                 </div>)
               })
             }
           </div>
-          <Split
-            sizes={[40, 60]}
-            direction='vertical'
-            style={{ height: "800px" }}
-            cursor='row-resize'
-            >
+        
             <Main />
             <Response />
-          </Split>
+        
 
         </div>
 

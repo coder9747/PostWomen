@@ -1,10 +1,13 @@
-import React, { useState } from 'react'
+import { Fragment, useState, } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
-import { ApiRequest, getState, initialState, updateCurrentRequestSettingIndex, updateRequestDataUrl, updateRequestMethodChange, updateRequestProtocol } from '../Redux-Store/DataSlice';
+import { ApiRequest, changeRequestLoading, getState, initialState, setResponse, updateCurrentRequestSettingIndex, updateRequestDataUrl, updateRequestMethodChange, updateRequestProtocol } from '../Redux-Store/DataSlice';
 import Params from './Settings/Params';
 import Body from './Settings/Body';
 import Authorization from './Settings/Authorization';
 import Headers from './Settings/Headers';
+import ClipLoader from "react-spinners/ClipLoader";
+
+
 
 interface Change {
     method: boolean,
@@ -33,6 +36,24 @@ const methods = [{
     name: 'OPTIONS',
     color: '#667BC6'
 }];
+function compactJsonString(jsonString) {
+    try {
+        // Parse the JSON string to ensure it's valid
+        const parsedJson = JSON.parse(jsonString);
+
+        // Stringify the JSON object without any extra spaces or line breaks
+        return JSON.stringify(parsedJson);
+    } catch (error) {
+        // If there's an error, the input is not valid JSON
+        throw new Error("Invalid JSON string");
+    }
+}
+function generateUUID() {
+    return 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, function (c) {
+        const r = Math.random() * 16 | 0, v = c === 'x' ? r : (r & 0x3 | 0x8);
+        return v.toString(16);
+    });
+}
 
 
 
@@ -55,7 +76,52 @@ const Main = () => {
         dispatch(updateRequestProtocol(protocol));
         setChangeInfo({ ...changeInfo, protocol: false });
     }
+    async function handleRequestSend() {
+        dispatch(changeRequestLoading(true));
 
+        interface Options {
+            method: string;
+            headers: {
+                [key: string]: string;
+            };
+            body?: string;
+        }
+
+        const options: Options = {
+            method: reqItem?.method as string,
+            headers: {
+                'Content-Type': 'application/json',
+            },
+        };
+
+        if (reqItem?.requestSettings[2].values) {
+            //@ts-ignore
+            console.log('run');
+            options.headers.Authorization = reqItem?.requestSettings[2].values;
+        }
+        reqItem?.requestSettings[3].values?.forEach((arr: [string, string]) => {
+            if (arr[0].length && arr[1].length) {
+                options.headers[arr[0]] = arr[1];
+            }
+        });
+
+        if (reqItem?.requestSettings[1].values) {
+            // options.body = `${compactJsonString(reqItem.requestSettings[1].values)}`;
+            options.body = reqItem.requestSettings[1].values;
+        }
+
+        const targetUrl = `${reqItem?.protocol}://${reqItem?.url}`;
+        const proxyUrl = `http://localhost:3002/proxy?url=${encodeURIComponent(targetUrl)}`;
+        try {
+            const respone = await fetch(proxyUrl, options);
+            const data: { succes: boolean, body: object } = await respone.json();
+            dispatch(setResponse(data));
+        } catch (error) {
+            dispatch(setResponse({ succes: false, message: "Unable To Reach Server" }));
+        } finally {
+            dispatch(changeRequestLoading(false));
+        }
+    }
     return (
         reqItem &&
         <div className='relative border  border-b-2 border-b-orange-600 '>
@@ -91,12 +157,21 @@ const Main = () => {
                         <li onClick={() => handeProtoColChange('ws')} className={`hover:bg-slate-100 font-medium ${reqItem.method == 'ws' ? 'bg-sate-100' : null} p-1 rounded text-red-600`}>ws</li>
                     </ul>
                 }
-
                 <div className='h-full relative' onClick={() => setChangeInfo({ ...changeInfo, protocol: true })}>
                     <input value={`${reqItem.protocol}://`} className='h-full border w-20 text-center outline-none' />
                 </div>
                 <input value={reqItem.url} onChange={(e) => { dispatch(updateRequestDataUrl(e.target.value)) }} className='h-full outline-none ps-2 border grow grid-rows-11' type="text" />
-                <button className='w-36 h-full  bg-orange-500 text-white'>SEND</button>
+                <div className='w-36 h-full flex justify-around items-center  bg-orange-500 text-white'>
+                    {reqItem.loading ? <Fragment>     <ClipLoader
+                        color={'white'}
+                        loading={true}
+                        size={29}
+                        aria-label="Loading Spinner"
+                        data-testid="loader"
+                        className='h-48'
+                    />
+                        <p className='text-white' onClick={() => dispatch(changeRequestLoading(false))}>Cancel</p></Fragment> : <button onClick={handleRequestSend}>Send</button>}
+                </div>
             </div>
             <ul className='h-10 justify-start gap-5 items-center ps-5 overflow-y-scroll flex    '>
                 {reqItem && reqItem.requestSettings.map((item: any, idx: number) => {

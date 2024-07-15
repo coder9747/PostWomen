@@ -28,6 +28,8 @@ export interface ApiRequest extends requestSettings {
     url?: string,
     protocol: string,
     method?: string,
+    response: any,
+    loading: boolean,
 }
 export interface SubCollections {
     name: string,
@@ -47,7 +49,72 @@ export interface initialState {
 const initialState: initialState = {
     activeCollection: null,
     activeSubcollection: null,
-    folders: [],
+    folders: [{
+        name: "TEST",
+        collections: [{
+            name: "GET",
+            requests: [{
+                method: "GET",
+                name: "Untitled",
+                active: false,
+                url: 'dummyjson.com/test',
+                protocol: "http",
+                activeRequestSettingsIndex: 0,
+                requestSettings: [{ name: "Params", values: [['', '']] }, { name: "Body", values: `` }, { name: "Authorization" }, { name: "Headers", values: [['', '']] }],
+                response: null,
+                loading: false,
+            }
+            ]
+        },
+
+        {
+            name: "POST",
+            requests: [{
+                method: "POST",
+                name: "Untitled",
+                active: false,
+                url: 'dummyjson.com/test',
+                protocol: "http",
+                activeRequestSettingsIndex: 0,
+                requestSettings: [{ name: "Params", values: [['', '']] }, { name: "Body", values: `` }, { name: "Authorization" }, { name: "Headers", values: [['', '']] }],
+                response: null,
+                loading: false,
+            }
+            ]
+        },
+        {
+            name: "DELETE",
+            requests: [{
+                method: "DELETE",
+                name: "Untitled",
+                active: false,
+                url: 'dummyjson.com/test',
+                protocol: "http",
+                activeRequestSettingsIndex: 0,
+                requestSettings: [{ name: "Params", values: [['', '']] }, { name: "Body", values: `` }, { name: "Authorization" }, { name: "Headers", values: [['', '']] }],
+                response: null,
+                loading: false,
+            }
+            ]
+        },
+        {
+            name: "PUT",
+            requests: [{
+                method: "PUT",
+                name: "Untitled",
+                active: false,
+                url: 'dummyjson.com/test',
+                protocol: "http",
+                activeRequestSettingsIndex: 0,
+                requestSettings: [{ name: "Params", values: [['', '']] }, { name: "Body", values: `` }, { name: "Authorization" }, { name: "Headers", values: [['', '']] }],
+                response: null,
+                loading: false,
+            }
+            ]
+        }
+
+        ], date: new Date(),
+    }],
     activeRequestIndex: null,
 }
 const DataSlice = createSlice({
@@ -89,7 +156,9 @@ const DataSlice = createSlice({
                         url: '',
                         protocol: "http",
                         activeRequestSettingsIndex: 0,
-                        requestSettings: [{ name: "Params", values: [['', '']] }, { name: "Body" }, { name: "Authorization" }, { name: "Headers", values: [['', '']] }]
+                        requestSettings: [{ name: "Params", values: [['', '']] }, { name: "Body", values: `` }, { name: "Authorization" }, { name: "Headers", values: [['', '']] }],
+                        response: null,
+                        loading: false,
                     });
             }
         },
@@ -105,7 +174,7 @@ const DataSlice = createSlice({
             state.activeSubcollection = Sindex;
             state.activeRequestIndex = reqIndex;
         },
-        updateRequestDataUrl(state, action) {   
+        updateRequestDataUrl(state, action) {
             const value = action.payload as string;
             if (state.activeCollection != null && state.activeRequestIndex != null && state.activeSubcollection != null) {
                 const url = state.folders[state.activeCollection].collections[state.activeSubcollection].requests[state.activeRequestIndex];
@@ -156,17 +225,17 @@ const DataSlice = createSlice({
                 if (values) {
                     values[idx][key] = value;
                 }
-                const queryParams = values?.reduce((acc,pre)=>{
+                const queryParams = values?.reduce((acc, pre) => {
                     //@ts-ignore
                     acc[pre[0]] = pre[1];
                     return acc;
-                },{});
+                }, {});
                 //@ts-ignore
                 const queryStringFields = queryString.stringify(queryParams);
                 const fullUrl = state.folders[state.activeCollection].collections[state.activeSubcollection].requests[state.activeRequestIndex].url?.split("?")[0];
                 state.folders[state.activeCollection].collections[state.activeSubcollection].requests[state.activeRequestIndex].url = `${fullUrl}?${queryStringFields}`;
-                
-                
+
+
 
 
             }
@@ -176,7 +245,7 @@ const DataSlice = createSlice({
             if (state.activeCollection != null && state.activeSubcollection != null && state.activeRequestIndex != null) {
                 const val = state.folders[state.activeCollection].collections[state.activeSubcollection].requests[state.activeRequestIndex].requestSettings;
                 if (val) {
-                    val[1].values = action.payload;
+                    val[1].values = `${action.payload}`;
                 };
             }
         },
@@ -196,7 +265,30 @@ const DataSlice = createSlice({
                     .requests[state.activeRequestIndex].requestSettings[3].values;
                 val?.push(['', '']);
             }
+        },
+        requestNameChange(state, action) {
+            const value = action.payload;
+            if (state.activeCollection != null && state.activeSubcollection != null && state.activeRequestIndex != null) {
+                state.folders[state.activeCollection].collections[state.activeSubcollection].requests[state.activeRequestIndex].name = value;
+            }
+        },
+        changeRequestLoading(state, action) {
+            if (state.activeCollection != null && state.activeSubcollection != null && state.activeRequestIndex != null) {
+                state.folders[state.activeCollection].collections[state.activeSubcollection].requests[state.activeRequestIndex].loading = action.payload;
+            }
+        },
+        changeAuthorizationValue(state, action) {
+            if (state.activeCollection != null && state.activeSubcollection != null && state.activeRequestIndex != null) {
+                state.folders[state.activeCollection].collections[state.activeSubcollection].requests[state.activeRequestIndex].requestSettings[2].values = action.payload;
+            }
+        },
+        setResponse(state, action) {
+            if (state.activeCollection != null && state.activeSubcollection != null && state.activeRequestIndex != null) {
+                state.folders[state.activeCollection].collections[state.activeSubcollection].requests[state.activeRequestIndex].response = action.payload;
+            }
         }
+
+
     }
 });
 export const getState = (state: any) => state.DataSlice;
@@ -217,7 +309,11 @@ export const {
     updateQueryParameterInRequest,
     updateRequestBody,
     updateRequestHeaderInput,
-    addMoreRequestHeadersInput
+    addMoreRequestHeadersInput,
+    requestNameChange,
+    changeRequestLoading,
+    changeAuthorizationValue,
+    setResponse
 
 } = DataSlice.actions;
 
