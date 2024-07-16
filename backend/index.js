@@ -1,9 +1,8 @@
 import express from "express";
 import cors from "cors";
-import parseJson from "json-parse-better-errors";
 
 const app = express();
-const PORT = 3002;
+const PORT = 20000;
 
 // Enable CORS
 app.use(cors());
