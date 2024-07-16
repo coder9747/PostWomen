@@ -68,7 +68,7 @@ app.use("/proxy", async (req, res) => {
   }
 });
 
-app.use("/test",(res,res)=>res.json({succes:true,message:"Server Is Healthy"}));
+app.use("/test",(req,res)=>res.json({succes:true,message:"Server Is Healthy"}));
 
 
 // Error handling middleware
