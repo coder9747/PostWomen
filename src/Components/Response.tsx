@@ -1,8 +1,6 @@
-import React from 'react'
 import { useSelector } from 'react-redux'
 import { getState } from '../Redux-Store/DataSlice'
 import { getCurrentRequest } from './Main';
-import nodata from "../Assects/nodata.jpg";
 import AceEditor from "react-ace";
 import 'ace-builds/src-noconflict/mode-json';
 import 'ace-builds/src-noconflict/theme-github';

@@ -1,4 +1,3 @@
-import React from 'react'
 import { useDispatch, useSelector } from 'react-redux'
 import { addNewQueryParams, getState, updateQueryParameterInRequest } from '../../Redux-Store/DataSlice'
 import { getCurrentRequest } from '../Main';

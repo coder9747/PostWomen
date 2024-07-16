@@ -1,14 +1,13 @@
-import React, { useCallback, useState } from 'react'
+import  { useCallback, useState } from 'react'
 import { useDispatch, useSelector } from 'react-redux';
 import { addCollection, addRequest, addSubCollection, ApiRequest, changeActiveCollection, changeActiveRequestIndex, changeActiveSubCollection, Collections, getState, initialState, requestNameChange, SubCollections, updateAllActiveIndex } from './Redux-Store/DataSlice';
 import Main from './Components/Main';
 import Response from './Components/Response';
-import Split from 'react-split'
 
 
 const App = () => {
 
-  const [selectedIndex, setSelectedIndex] = useState<number>(0);
+  // const [selectedIndex, setSelectedIndex] = useState<number>(0);
   const [isPlusClicked, setPlusClicked] = useState<boolean>(false);
   const [subDirAddNumber, setSubDirAddNumber] = useState<number | null>(null);
   const [name, setName] = useState<string>('');

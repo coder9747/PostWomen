@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import  { useState } from 'react';
 import AceEditor from "react-ace";
 import 'ace-builds/src-noconflict/mode-json';
 import 'ace-builds/src-noconflict/theme-github';
@@ -7,7 +7,6 @@ import { useDispatch, useSelector } from 'react-redux';
 import { getState, updateRequestBody } from '../../Redux-Store/DataSlice';
 
 const Body = () => {
-    const [json, setJson] = useState('{}');
     const [error, isError] = useState<boolean>(false);
     const state = useSelector(getState);
     const reqItem = getCurrentRequest(state);

@@ -36,24 +36,6 @@ const methods = [{
     name: 'OPTIONS',
     color: '#667BC6'
 }];
-function compactJsonString(jsonString) {
-    try {
-        // Parse the JSON string to ensure it's valid
-        const parsedJson = JSON.parse(jsonString);
-
-        // Stringify the JSON object without any extra spaces or line breaks
-        return JSON.stringify(parsedJson);
-    } catch (error) {
-        // If there's an error, the input is not valid JSON
-        throw new Error("Invalid JSON string");
-    }
-}
-function generateUUID() {
-    return 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, function (c) {
-        const r = Math.random() * 16 | 0, v = c === 'x' ? r : (r & 0x3 | 0x8);
-        return v.toString(16);
-    });
-}
 
 
 

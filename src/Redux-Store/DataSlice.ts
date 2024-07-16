@@ -1,4 +1,4 @@
-import { createSlice, findNonSerializableValue } from "@reduxjs/toolkit";
+import { createSlice } from "@reduxjs/toolkit";
 import queryString from 'query-string';
 export type Params = {
     name: string,
