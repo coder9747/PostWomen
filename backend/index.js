@@ -15,8 +15,8 @@ app.use("/proxy", async (req, res) => {
   const targetUrl = req.query.url;
   if (!targetUrl) {
     return res.status(400).json({
-      succes:false,
-      message:"Missing url",
+      succes: false,
+      message: "Missing url",
     });
   }
 
@@ -27,17 +27,12 @@ app.use("/proxy", async (req, res) => {
       headers: { ...req.headers }, // Pass all headers from the original request
     };
     delete fetchOptions.headers["content-length"];
-    if (req.headers.Authorization) {
-      console.log("present");
-    }
-
     // If the request is not GET and there's a body, include it in fetchOptions
     if (req.method !== "GET" && req.body) {
       fetchOptions.body = JSON.stringify(req.body);
     }
     // Fetch the target URL
     let startTime = Date.now();
-    console.log(targetUrl, fetchOptions);
     const response = await fetch(targetUrl, fetchOptions);
     // Calculate response time
     const responseTime = Date.now() - startTime;
@@ -74,12 +69,18 @@ app.use("/proxy", async (req, res) => {
   }
 });
 
+
 // Error handling middleware
 app.use((err, req, res, next) => {
   console.error(err);
   res.status(500).send("Something went wrong.");
 });
 
+
+
+
+
 app.listen(PORT, () => {
   console.log(`Proxy server is running on http://localhost:${PORT}`);
 });
+
