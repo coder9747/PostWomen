@@ -92,7 +92,7 @@ const App = () => {
       </ul>
       <div className='grid grid-cols-12 h-full'>
         <div className='col-span-2 grid grid-cols-12 '>
-          <div className='col-span-4 border flex flex-col p-2 gap-1 text-white transition-all'>
+          {/* <div className='col-span-4 border flex flex-col p-2 gap-1 text-white transition-all'>
             <div onClick={() => setSelectedIndex(0)} className={`flex gap-3 flex-col rounded-xl text-sm justify-center items-center p-3 ${selectedIndex == 0 ? "bg-primary" : 'text-black'}`}>
               <i className="fa-solid fa-book"></i>
               <p className='text-[12px]'>Collections</p>
@@ -109,8 +109,8 @@ const App = () => {
               <i className="fa-solid fa-book"></i>
               <p className='text-[12px]'>Collections</p>
             </div>
-          </div>
-          <div className='col-span-8 border '>
+          </div> */}
+          <div className='col-span-12 border '>
             <div className='h-8 border flex justify-start px-2 items-center'>
               <i onClick={() => setPlusClicked((pre) => !pre)} className={`fa-solid fa-plus ${isPlusClicked ? 'text-primary' : null} text-gray-500`}></i>
               <i className="fa-solid fa-filter text-gray-500 ms-5"></i>
@@ -189,11 +189,8 @@ const App = () => {
               })
             }
           </div>
-        
             <Main />
             <Response />
-        
-
         </div>
 
       </div>

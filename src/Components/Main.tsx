@@ -161,7 +161,7 @@ const Main = () => {
                     <input value={`${reqItem.protocol}://`} className='h-full border w-20 text-center outline-none' />
                 </div>
                 <input value={reqItem.url} onChange={(e) => { dispatch(updateRequestDataUrl(e.target.value)) }} className='h-full outline-none ps-2 border grow grid-rows-11' type="text" />
-                <div className='w-36 h-full flex justify-around items-center  bg-orange-500 text-white'>
+                <div onClick={handleRequestSend} className='w-36 h-full flex justify-around items-center  bg-orange-500 text-white'>
                     {reqItem.loading ? <Fragment>     <ClipLoader
                         color={'white'}
                         loading={true}
@@ -170,7 +170,7 @@ const Main = () => {
                         data-testid="loader"
                         className='h-48'
                     />
-                        <p className='text-white' onClick={() => dispatch(changeRequestLoading(false))}>Cancel</p></Fragment> : <button onClick={handleRequestSend}>Send</button>}
+                        <p className='text-white' onClick={() => dispatch(changeRequestLoading(false))}>Cancel</p></Fragment> : <button >Send</button>}
                 </div>
             </div>
             <ul className='h-10 justify-start gap-5 items-center ps-5 overflow-y-scroll flex    '>
@@ -190,7 +190,7 @@ export default Main;
 
 export function getCurrentRequest(state: initialState) {
     if (state.activeCollection != null && state.activeSubcollection != null && state.activeRequestIndex != null) {
-        return state.folders[state.activeCollection].collections[state.activeSubcollection].requests[state.activeRequestIndex];
+        return state.folders[state.activeCollection]?.collections[state.activeSubcollection]?.requests[state.activeRequestIndex];
     };
     return null;
 }

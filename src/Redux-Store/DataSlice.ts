@@ -196,7 +196,7 @@ const DataSlice = createSlice({
         updateRequestProtocol(state, action) {
             const protocol = action.payload as string;
             if (state.activeCollection != null && state.activeSubcollection != null && state.activeRequestIndex != null) {
-                state.folders[state.activeCollection].collections[state.activeCollection].requests[state.activeRequestIndex].protocol = protocol;
+                state.folders[state.activeCollection].collections[state.activeSubcollection].requests[state.activeRequestIndex].protocol = protocol;
             }
         },
         updateRequestMethodChange(state, action) {
