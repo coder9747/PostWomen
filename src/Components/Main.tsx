@@ -93,7 +93,7 @@ const Main = () => {
         }
 
         const targetUrl = `${reqItem?.protocol}://${reqItem?.url}`;
-        const proxyUrl = `http://localhost:3002/proxy?url=${encodeURIComponent(targetUrl)}`;
+        const proxyUrl = `https://postwomen-3.onrender.com/proxy?url=${encodeURIComponent(targetUrl)}`;
         try {
             const respone = await fetch(proxyUrl, options);
             const data: { succes: boolean, body: object } = await respone.json();
