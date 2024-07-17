@@ -79,7 +79,7 @@ const Main = () => {
         if (reqItem?.requestSettings[2].values) {
             //@ts-ignore
             console.log('run');
-            options.headers.Authorization = reqItem?.requestSettings[2].values;
+            options.headers.Authorization = `Bearer ${reqItem?.requestSettings[2].values}`;
         }
         reqItem?.requestSettings[3].values?.forEach((arr: [string, string]) => {
             if (arr[0].length && arr[1].length) {
